@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Shun_State_Machine
+namespace Shun_Utilities
 {
     /// <summary>
     /// This is a StateHistory using a stack, save and restore form the top of the stack

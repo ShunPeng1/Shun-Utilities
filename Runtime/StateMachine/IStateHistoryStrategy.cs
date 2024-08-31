@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Shun_State_Machine
+namespace Shun_Utilities
 {
     /// <summary>
     /// Using Strategy Pattern to choose a History class

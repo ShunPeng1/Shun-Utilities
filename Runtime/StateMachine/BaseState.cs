@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Shun_State_Machine
+namespace Shun_Utilities
 {
     [Serializable]
     public class BaseState : IState

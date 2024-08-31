@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Shun_State_Machine
+namespace Shun_Utilities
 {
     [Serializable]
     public class BaseStateMachine

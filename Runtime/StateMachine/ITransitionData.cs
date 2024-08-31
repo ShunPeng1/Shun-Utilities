@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Shun_State_Machine
+namespace Shun_Utilities
 {
     public interface ITransitionData
     {

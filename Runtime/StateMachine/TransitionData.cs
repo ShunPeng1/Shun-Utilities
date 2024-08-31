@@ -1,4 +1,4 @@
-﻿namespace Shun_State_Machine
+﻿namespace Shun_Utilities
 {
     public class TransitionData : ITransitionData
     {
