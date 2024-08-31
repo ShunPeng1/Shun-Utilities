@@ -1,0 +1,23 @@
+{
+  "name": "com.shunpeng.shun_utilities",
+  "version": "1.0.0",
+  "displayName": "Shun Utilities",
+  "description": "This is shun utilities",
+  "unity": "2021.1",
+  "unityRelease": "0b5",
+  "documentationUrl": "https://example.com/",
+  "changelogUrl": "https://example.com/changelog.html",
+  "licensesUrl": "https://example.com/licensing.html",
+  "dependencies": {
+    
+ },
+ "keywords": [
+    
+    
+  ],
+  "author": {
+    "name": "ShunPeng",
+    "email": "shunpeng1@gmail.com",
+    "url": "https://github.com/ShunPeng1"
+  }
+}
