@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+
+#if DOTWEEN
 using DG.Tweening;
+#endif
+
 using UnityEngine;
 
 namespace Shun_Utilities
