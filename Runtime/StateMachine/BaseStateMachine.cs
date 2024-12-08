@@ -10,11 +10,11 @@ namespace Shun_Utilities
     public class BaseStateMachine
     {
         [SerializeField] protected StateNode CurrentState = default;
-        private Dictionary<Type, StateNode> _nodes = new();
-        private HashSet<ITransition> _anyStateTransitions = new();
+        protected Dictionary<Type, StateNode> Nodes = new();
+        protected HashSet<ITransition> AnyStateTransitions = new();
 
-        private ITransitionData _lastTransitionData;
-        private IState _emptyState = new BaseState();
+        protected ITransitionData LastTransitionData;
+        protected IState EmptyState = new BaseState();
 
         [Header("History")] protected IStateHistoryStrategy StateHistoryStrategy;
 
@@ -82,12 +82,12 @@ namespace Shun_Utilities
         }
 
 
-        private BaseStateMachine()
+        protected BaseStateMachine()
         {
-            AddOrOverwriteState(_emptyState);
+            AddOrOverwriteState(EmptyState);
         }
         
-        public void SetInitialState(IState initialState, bool onEnterCall = false, ITransitionData enterData = null)
+        public virtual void SetInitialState(IState initialState, bool onEnterCall = false, ITransitionData enterData = null)
         {
             CurrentState = new StateNode(initialState);
             if (onEnterCall)
@@ -96,12 +96,12 @@ namespace Shun_Utilities
             }
         }
         
-        public void SetStateHistoryStrategy(IStateHistoryStrategy stateHistoryStrategy)
+        public virtual void SetStateHistoryStrategy(IStateHistoryStrategy stateHistoryStrategy)
         {
             StateHistoryStrategy = stateHistoryStrategy;
         }
         
-        public void Update(ITransitionData parameter = null)
+        public virtual void Update(ITransitionData parameter = null)
         {
             var transition = GetTransition();
 
@@ -119,7 +119,7 @@ namespace Shun_Utilities
             
         }
         
-        public void FixedUpdate(ITransitionData parameter = null)
+        public virtual void FixedUpdate(ITransitionData parameter = null)
         {
             var transition = GetTransition();
             
@@ -136,9 +136,9 @@ namespace Shun_Utilities
             CurrentState?.State.FixedUpdateState();
         }
 
-        private ITransition GetTransition()
+        protected virtual ITransition GetTransition()
         {
-            foreach (var transition in _anyStateTransitions.Where(transition => transition.Condition.Evaluate()))
+            foreach (var transition in AnyStateTransitions.Where(transition => transition.Condition.Evaluate()))
             {
                 return transition;
             }
@@ -149,12 +149,12 @@ namespace Shun_Utilities
 
         public void AddOrOverwriteState(IState baseState, HashSet<ITransition> transitions = null)
         {
-            _nodes[baseState.GetType()] = new StateNode(baseState, transitions);
+            Nodes[baseState.GetType()] = new StateNode(baseState, transitions);
         }
         
         public void RemoveState(IState stateEnum)
         {
-            _nodes.Remove(stateEnum.GetType());
+            Nodes.Remove(stateEnum.GetType());
         }
         
         public void AddTransition(IState fromState, IState toState, IPredicate predicate)
@@ -164,7 +164,7 @@ namespace Shun_Utilities
         
         public void AddAnyTransition(IState toState, IPredicate predicate)
         {
-            _anyStateTransitions.Add(new Transition(toState, predicate));
+            AnyStateTransitions.Add(new Transition(toState, predicate));
         }
         
         public void RemoveTransition(IState fromState, IState toState, IPredicate predicate)
@@ -174,26 +174,26 @@ namespace Shun_Utilities
         
         public void RemoveAnyTransition(IState toState, IPredicate predicate)
         {
-            _anyStateTransitions.RemoveWhere(transition => transition.ToState == toState && transition.Condition == predicate);
+            AnyStateTransitions.RemoveWhere(transition => transition.ToState == toState && transition.Condition == predicate);
         }
         
-        private StateNode GetOrAddNode(IState state)
+        protected virtual StateNode GetOrAddNode(IState state)
         {
-            var node = _nodes.GetValueOrDefault(state.GetType());
+            var node = Nodes.GetValueOrDefault(state.GetType());
             
             if (node == null)
             {
                 node = new StateNode(state);
-                _nodes[state.GetType()] = node;
+                Nodes[state.GetType()] = node;
             }
             
             return node;
         }
-        public void SetToState(IState toState, ITransitionData transitionData = null, bool isAllowReenter = true)
+        public virtual void SetToState(IState toState, ITransitionData transitionData = null, bool isAllowReenter = true)
         {
             if (toState == null || (toState == CurrentState.State && !isAllowReenter)) return;
             
-            if (_nodes.TryGetValue(toState.GetType(), out StateNode nextState))
+            if (Nodes.TryGetValue(toState.GetType(), out StateNode nextState))
             {
                 StateHistoryStrategy?.Save(nextState.State, transitionData);
                 SwitchState(nextState, transitionData);
@@ -214,7 +214,7 @@ namespace Shun_Utilities
             return CurrentState?.State.GetType();
         }
         
-        public void RestoreState()
+        public virtual void RestoreState()
         {
             if (StateHistoryStrategy == null) return;
             var (enterState, exitOldStateParameters) = StateHistoryStrategy.Restore();
@@ -226,14 +226,14 @@ namespace Shun_Utilities
             
         }
 
-        public (IState transitedState, ITransitionData transitionData) PeakHistory()
+        public virtual (IState transitedState, ITransitionData transitionData) PeakHistory()
         {
             if (StateHistoryStrategy == null) return (default, default);
             var (enterState, exitOldStateParameters) = StateHistoryStrategy.Restore(false);
             return (enterState, exitOldStateParameters);
         }
 
-        private void SwitchState(StateNode nextState, ITransitionData transitionData = null)
+        protected virtual void SwitchState(StateNode nextState, ITransitionData transitionData = null)
         {
             CurrentState.State.OnExitState(transitionData);
             var lastStateEnum = CurrentState;
