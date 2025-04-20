@@ -13,7 +13,7 @@ namespace Shun_Utilities
         public int InitSize = 10;
         public bool HasMaxSize = false;
         public int MaxSize = 100;
-
+        public bool IsDebug = false;
         
         private Transform _originalParent;
         private List<GameObject> _pooledInstances;
@@ -63,7 +63,8 @@ namespace Shun_Utilities
                 {
                     if (_aliveInstances.Count >= MaxSize)
                     {
-                        Debug.LogWarning("[PoolManager] MaxSize of \"" + Prefab.name + "\" reached. Cannot create more!");
+                        if (IsDebug)
+                            Debug.LogWarning("[PoolManager] MaxSize of \"" + Prefab.name + "\" reached. Cannot create more!");
                         return null;
                     }
                 }
@@ -75,8 +76,8 @@ namespace Shun_Utilities
                 newInstance.transform.localScale = scale;
 
                 _aliveInstances.Add(newInstance);
-                
-                Debug.LogWarning("[PoolManager] Pool of \"" + Prefab.name + "\" is empty. Created a new instance.");
+                if (IsDebug)
+                    Debug.LogWarning("[PoolManager] Pool of \"" + Prefab.name + "\" is empty. Created a new instance.");
                 
                 return newInstance;
             }
