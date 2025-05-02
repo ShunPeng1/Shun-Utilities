@@ -49,6 +49,7 @@ namespace Shun_Utilities
 
             // Register, make persistent and call event methods
             instance = (TSubclass) this;
+            gameObject.transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
             OnPersistentSingletonAwake();
             OnAwakeOrSwitch();
